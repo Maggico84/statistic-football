@@ -1,16 +1,16 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!! Copyright (c) 2009, Davide Ferrarese					      !!
-!! All rights reserved.							      !!
-!! 									      !!
+!! Copyright (c) 2009, Davide Ferrarese									      !!
+!! All rights reserved.							 						      !!
+!! 									     									  !!
 !! Redistribution and use in source and binary forms, with or without         !!
 !! modification, are permitted provided that the following conditions are met:!!
-!! 									      !!
+!! 																		      !!
 !! 1. Redistributions of source code must retain the above copyright notice,  !!
 !!    this list of conditions and the following disclaimer.                   !!
 !! 2. Redistributions in binary form must reproduce the above copyright       !!
 !!    notice, this list of conditions and the following disclaimer in the     !!
 !!    documentation and/or other materials provided with the distribution.    !!
-!! 									      !!
+!! 																		      !!
 !! THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"!!
 !! AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE  !!
 !! IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE !!
@@ -27,9 +27,20 @@
 PROGRAM Statistic_Football
 
 	IMPLICIT NONE
-
-	Real(kind = 8), dimension(:), allocatable :: x
-
+!Variabili
+	Integer :: i, N, controllo
+	Integer, dimension(:), allocatable :: Pti, PG
+	Real(kind = 8) :: rangePV, rangeQ
+	Real(kind = 8), dimension(:), allocatable :: PV, Q
+	Character(30) :: Squadra, Punti, PartiteGiocate, ProbVittoria
+	Character(30), dimension(:), allocatable :: Team
+!Allocazione dei vettori
+	N = 20
+	allocate(Pti(N))
+	allocate(PG(N))
+	allocate(PV(N))
+	allocate(Q(N))
+	allocate(Team(N))
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !Controllo se nel file classifica.dat il vettore probabilità di vittoria è    !!
 !diverso da zero, altrimenti utilizzo il file quote.dat			      !!
@@ -46,7 +57,7 @@ PROGRAM Statistic_Football
 	end do
 
 	if(controllo .eq. N) then
-		open(20, file = "quote.dat")
+		open(20, file = 'quote.dat')
 		do i = 1, N
 			read(20, *) Team(i), Q(i)
 		end do			
@@ -64,5 +75,30 @@ PROGRAM Statistic_Football
 	close(10)
 	close(20)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!Creo il vettore Effetto del pubblico con il file gare.dat e pubblico.dat		!!
+!TO DO																			!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!Assegno le probabilità di vittoria degli incontri scrivendo in scommesse.dat  !!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-END Statistic_Football
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!Assegno i risultati ad ogni squadra											!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!Assegno la probabilità Pk, dovuta alla vittoria o meno di ogni squadra. Questa!! 
+!!probabilità va ad aggiungersi o sottrarsi, alla probabiità di vittoria Q. In	!! 
+!!caso di pareggio si ha una probabilità eps minore da aggiungere o sotrarre. 	!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!Aggiornamento della classifica												!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+	deallocate(Pti)
+	deallocate(PG)
+	deallocate(PV)
+	deallocate(Q)
+	deallocate(Team)
+END PROGRAM Statistic_Football
