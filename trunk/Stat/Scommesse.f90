@@ -25,38 +25,46 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-SUBROUTINE Sort(VettoreReal, VettoreChar, Dimensione)
+SUBROUTINE Scommesse(Squadra, ProbVittoria, EffettoP, Dimensione)
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!Riordinamento dei vettori real e char in ordine 	!!
-!!crescente in base ai valori del vettore real		!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!Funzione che assegna la probabilità di vittoria della partita	!!
+!!ad ogni squadra. Tali probabilità vengono stampate sul file 	!!
+!!scommesse.dat													!! 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 IMPLICIT NONE
-
 !Variabili in Input
 Integer :: Dimensione
-Real(Kind = 8), dimension(Dimensione) :: VettoreReal
-Character(30), dimension(Dimensione) :: VettoreChar
+Real(kind = 8) :: EffettoP
+Real(kind = 8), dimension(Dimensione) :: ProbVittoria
+Character(30), dimension(Dimensione) :: Squadra 
 
 !Variabili Locali
 Integer :: i, j
-Real(kind = 8) :: minimo
-Character(30) :: charmin
+Character(30) :: Sqcasa, Sqfcasa, NumTifSqcasa
+Real(kind = 8) :: pv11, pv12, pv21, pv22
 
-	do i = 1, Dimensione-1
-		minimo = VettoreReal(i)
-		charmin = VettoreChar(i)
-		do j = i+1, Dimensione
-			if(VettoreReal(j) .lt. minimo ) then
-				VettoreReal(i) = VettoreReal(j)
-					VettoreChar(i) = VettoreChar(j)
-				VettoreReal(j) = minimo
-					VettoreChar(j) = charmin
-				minimo = VettoreReal(i)
-					charmin = VettoreChar(i)
+	open(10, file = 'gare.dat')
+	read(10, *) Sqcasa, Sqfcasa, NumTifSqcasa
+	
+	open(20, file = 'scommesse.dat')
+	write(20, *) 'Squadra_Casa', '', 'Squadra_Fcasa', '', '1', '', 'X', '', '2'
+	
+	do i = 1, int(Dimensione/2)
+		read(10, *) Sqcasa, Sqfcasa, NumTifSqcasa
+		do j = 1, Dimensione
+			if(Squadra(j) .eq. Sqcasa) then
+				pv11 = ProbVittoria(j) + EffettoP
+				pv21 = 1 - pv11
+			else if(Squadra(j) .eq. Sqfcasa) then
+				pv12 = 1 - ProbVittoria(j)
+				pv22 = ProbVittoria(j)
 			end if
-		end do 
+		end do
+		write(20, *) Sqcasa, Sqfcasa, pv11 * pv12, pv21 * pv22, 1 - pv11*pv12 - pv21*pv22
 	end do
-
-END SUBROUTINE Sort
+	close(10)
+	close(20)
+	
+END SUBROUTINE Scommesse
