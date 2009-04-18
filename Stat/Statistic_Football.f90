@@ -29,10 +29,10 @@ PROGRAM Statistic_Football
 	IMPLICIT NONE
 !Variabili
 	Integer :: i, N, controllo
-	Integer, dimension(:), allocatable :: Pti, PG
-	Real(kind = 8) :: rangePV, rangeQ
+	Integer, dimension(:), allocatable :: Pti, PG, Ris
+	Real(kind = 8) :: rangePV, rangeQ, effPub, P11, P12, P21, P22
 	Real(kind = 8), dimension(:), allocatable :: PV, Q
-	Character(30) :: Squadra, Punti, PartiteGiocate, ProbVittoria
+	Character(30) :: Squadra, Punti, PartiteGiocate, ProbVittoria, Sqcasa, Sqfcasa, NumTifSqcasa
 	Character(30), dimension(:), allocatable :: Team
 !Allocazione dei vettori
 	N = 20
@@ -41,6 +41,7 @@ PROGRAM Statistic_Football
 	allocate(PV(N))
 	allocate(Q(N))
 	allocate(Team(N))
+	allocate(Ris(N))
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !Controllo se nel file classifica.dat il vettore probabilità di vittoria è    !!
 !diverso da zero, altrimenti utilizzo il file quote.dat			      !!
@@ -78,14 +79,15 @@ PROGRAM Statistic_Football
 !Creo il vettore Effetto del pubblico con il file gare.dat e pubblico.dat		!!
 !TO DO																			!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	
+	effPub = 0.1d0
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!Assegno le probabilità di vittoria degli incontri scrivendo in scommesse.dat  !!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+	call Scommesse(Team, PV, effPub, N)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!Assegno i risultati ad ogni squadra											!!
+!!Assegno i risultati di ogni squadra												!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+	call Risultati(Team, Ris, N)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!Assegno la probabilità Pk, dovuta alla vittoria o meno di ogni squadra. Questa!! 
 !!probabilità va ad aggiungersi o sottrarsi, alla probabiità di vittoria Q. In	!! 
@@ -101,4 +103,5 @@ PROGRAM Statistic_Football
 	deallocate(PV)
 	deallocate(Q)
 	deallocate(Team)
+	deallocate(Ris)
 END PROGRAM Statistic_Football
