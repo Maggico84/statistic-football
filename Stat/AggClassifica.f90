@@ -25,46 +25,50 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-SUBROUTINE Scommesse(Squadra, ProbVittoria, EffettoP, Dimensione)
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!Funzione che assegna la probabilità di vittoria della partita	!!
-!!ad ogni squadra. Tali probabilità vengono stampate sul file 	!!
-!!scommesse.dat													!! 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+SUBROUTINE AggClassifica(Punti, Squadra, GareGiocate, Esito, ProbVittoria, Pdo1, Dimensione)
 
 IMPLICIT NONE
-!Variabili in Input
+
+!Variabili di Input-Output
 Integer :: Dimensione
-Real(kind = 8) :: EffettoP
-Real(kind = 8), dimension(Dimensione) :: ProbVittoria
-Character(30), dimension(Dimensione) :: Squadra 
+Integer, dimension(Dimensione) :: Punti, GareGiocate, Esito
+Real(kind = 8), dimension(Dimensione) :: ProbVittoria, Pdo1
+Character(30), dimension(Dimensione) :: Squadra
 
 !Variabili Locali
-Integer :: i, j
-Character(30) :: Sqcasa, Sqfcasa, NumTifSqcasa
-Real(kind = 8) :: pv11, pv12, pv21, pv22
+Integer :: i, j, massimo, GGm, Em
+Real(kind = 8) :: PVm, Pdm
+Character(30) :: charmax
 
-	open(10, file = 'gare.dat')
-	read(10, *) Sqcasa, Sqfcasa, NumTifSqcasa
-	
-	open(20, file = 'scommesse.dat')
-	write(20, *) 'Squadra_Casa', ' ', 'Squadra_Fcasa', ' ', '1', ' ', 'X', ' ', '2'
-	
-	do i = 1, int(Dimensione/2)
-		read(10, *) Sqcasa, Sqfcasa, NumTifSqcasa
-		do j = 1, Dimensione
-			if(Squadra(j) .eq. Sqcasa) then
-				pv11 = ProbVittoria(j) + EffettoP
-				pv21 = 1 - pv11
-			else if(Squadra(j) .eq. Sqfcasa) then
-				pv12 = 1 - ProbVittoria(j)
-				pv22 = ProbVittoria(j)
+	do i = 1, Dimensione - 1
+		massimo = Punti(i)
+			charmax = Squadra(i)
+				GGm = GareGiocate(i)
+					Em = Esito(i)
+						PVm = ProbVittoria(i)
+							Pdm = Pdo1(i)
+		do j = i + 1, Dimensione
+			if(Punti(j) .gt. massimo ) then
+				Punti(i) = Punti(j)
+					Squadra(i) = Squadra(j)
+						GareGiocate(i) = GareGiocate(j)
+							Esito(i) = Esito(j)
+								ProbVittoria(i) = ProbVittoria(j)
+									Pdo1(i) = Pdo1(j)
+				Punti(j) = massimo
+					Squadra(j) = charmax
+						GareGiocate(j) = GGm
+							Esito(j) = Em
+								ProbVittoria(j) = PVm
+									Pdo1(j) = Pdm
+				massimo = Punti(i)
+					charmax = Squadra(i)
+						GGm = GareGiocate(i)
+							Em = Esito(i)
+								PVm = ProbVittoria(i)
+									Pdm = Pdo1(i)
 			end if
-		end do
-		write(20, *) Sqcasa, Sqfcasa, pv11 * pv12, pv21 * pv22, 1 - pv11*pv12 - pv21*pv22
+		end do 
 	end do
-	close(10)
-	close(20)
-	
-END SUBROUTINE Scommesse
+
+END SUBROUTINE
