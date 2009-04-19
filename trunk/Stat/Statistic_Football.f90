@@ -97,6 +97,18 @@ PROGRAM Statistic_Football
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	call ParmetroPK(Team, Pti, PG, PV, Ris, PK, PEps, N)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!Aggiorno le probbailità di vittoria di ogni squadra							!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	do i = 1, N
+		if(Ris(i) .eq. 1) then
+			PV(i) = PV(i) + PK(i) 
+		else if(Ris(i) .eq. -1) then
+			PV(i) = PV(i) - PK(i)
+		else
+			PV(i) = PV(i) + PEps(i) 
+		end if
+	end do
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!Aggiornamento della classifica												!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	open(10, file = 'classifica.dat')
@@ -117,4 +129,6 @@ PROGRAM Statistic_Football
 	deallocate(Q)
 	deallocate(Team)
 	deallocate(Ris)
+	deallocate(PK)
+	deallocate(PEps)
 END PROGRAM Statistic_Football
