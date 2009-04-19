@@ -31,7 +31,7 @@ PROGRAM Statistic_Football
 	Integer :: i, N, controllo
 	Integer, dimension(:), allocatable :: Pti, PG, Ris
 	Real(kind = 8) :: rangePV, rangeQ, effPub, P11, P12, P21, P22
-	Real(kind = 8), dimension(:), allocatable :: PV, Q
+	Real(kind = 8), dimension(:), allocatable :: PV, Q, PK, PEps
 	Character(30) :: Squadra, Punti, PartiteGiocate, ProbVittoria, Sqcasa, Sqfcasa, NumTifSqcasa
 	Character(30), dimension(:), allocatable :: Team
 !Allocazione dei vettori
@@ -42,6 +42,8 @@ PROGRAM Statistic_Football
 	allocate(Q(N))
 	allocate(Team(N))
 	allocate(Ris(N))
+	allocate(PK(N))
+	allocate(PEps(N))
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !Controllo se nel file classifica.dat il vettore probabilità di vittoria è    !!
 !diverso da zero, altrimenti utilizzo il file quote.dat			      !!
@@ -85,7 +87,7 @@ PROGRAM Statistic_Football
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	call Scommesse(Team, PV, effPub, N)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!Assegno i risultati di ogni squadra												!!
+!!Assegno i risultati di ogni squadra											!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	call Risultati(Team, Ris, N)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -93,11 +95,22 @@ PROGRAM Statistic_Football
 !!probabilità va ad aggiungersi o sottrarsi, alla probabiità di vittoria Q. In	!! 
 !!caso di pareggio si ha una probabilità eps minore da aggiungere o sotrarre. 	!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+	call ParmetroPK(Team, Pti, PG, PV, Ris, PK, PEps, N)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!Aggiornamento della classifica												!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+	open(10, file = 'classifica.dat')
+	if(controllo .eq. N) then
+		write(10, *) 'Squadra', ' ', 'Punti', ' ', 'PartiteGiocate', ' ' , 'ProbVittoria' 
+	else
+		write(10, *) Squadra, Punti, PartiteGiocate, ProbVittoria
+	end if
+	
+	do i = 1, N
+		write(10, *) Team(i), Pti(i), PG(i), PV(i)
+	end do
+	close(10)
+	
 	deallocate(Pti)
 	deallocate(PG)
 	deallocate(PV)
