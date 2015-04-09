@@ -1,0 +1,1 @@
+Statistic code for the forecast of the results of football games of the Italian championship.
